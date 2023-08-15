@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+  speedtest-tracker:
+    container_name: speedtest-tracker
+    ports:
+      - "8800:80"
+      - "8443:443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=speedtest_tracker
+      - DB_USERNAME=speedy
+      - DB_PASSWORD=password
+      - TZ=America/New_York
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/home/ad/docker/speedtest/config:/config"
+      - "/home/ad/docker/speedtest/web:/etc/ssl/web"
+    image: "ghcr.io/alexjustesen/speedtest-tracker:latest"
+    restart: unless-stopped
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_DB=speedtest_tracker
+      - POSTGRES_USER=speedy
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - speedtest-db:/var/lib/postgresql/data
+volumes:
+  speedtest-db:

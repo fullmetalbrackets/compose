@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  filebrowser:
+    restart: unless-stopped
+    container_name: filebrowser
+    image: filebrowser/filebrowser:latest
+    volumes:
+      - /home/ad/fileshare:/srv
+      - /home/ad/docker/filebrowser/filebrowser.db:/database/filebrowser.db
+      - /home/ad/docker/filebrowser/settings.json:/config/settings.json
+    ports:
+      - 8080:80
+    environment:
+      - TZ=America/New_York
+      - PUID=1000
+      - PGID=1000
+
+  tunnel:
+    restart: unless-stopped
+    container_name: share-tunnel
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=

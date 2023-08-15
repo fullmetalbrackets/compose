@@ -1,0 +1,102 @@
+version: "3.9"
+services:
+  jellyfin:
+    restart: unless-stopped
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - JELLYFIN_PublishedServerUrl=192.168.0.100
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/jellyfin:/config
+      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/tvshows:/data/tvshows
+      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/movies:/data/movies
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/data/music
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card0:/dev/dri/card0
+    network_mode: host
+
+  plex:
+    restart: unless-stopped
+    container_name: plex
+    image: linuxserver/plex:latest
+    network_mode: host
+    environment:
+      - TZ=America/New_York
+      - PLEX_UID=1000
+      - PLEX_GID=1000
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/plex:/config
+      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/movies:/movies
+      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/tvshows:/tvshows
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/music
+
+  tautulli:
+    restart: unless-stopped
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/tautulli:/config
+    ports:
+      - 8181:8181
+
+  kavita:
+    restart: unless-stopped
+    image: kizaing/kavita:latest
+    container_name: kavita
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/ebooks/comics:/comics
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/ebooks/books:/books
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/kavita:/kavita/config
+    environment:
+      - TZ=America/New_York
+    ports:
+      - "5000:5000"
+
+  navidrome:
+    restart: unless-stopped
+    container_name: navidrome
+    image: deluan/navidrome:latest
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/navidrome:/data
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/music
+    environment:
+      ND_BASEURL: "/music"
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info
+    network_mode: host
+
+  postgres:
+    restart: unless-stopped
+    image: postgres:15-alpine
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/ryot/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  ryot:
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    container_name: ryot
+    image: "ghcr.io/ignisda/ryot:latest"
+    environment:
+      - SERVER_INSECURE_COOKIE=true
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/ryot:/data
+    pull_policy: always
+
+volumes:
+  postgres_storage:

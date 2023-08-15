@@ -1,0 +1,38 @@
+version: "3.6"
+
+services:
+  cloudflared:
+    restart: unless-stopped
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    command: proxy-dns
+    environment:
+      - "TUNNEL_DNS_UPSTREAM=https://dns11.quad9.net/dns-query"
+      - "TUNNEL_DNS_PORT=5053"
+      - "TUNNEL_DNS_ADDRESS=0.0.0.0"
+
+  pihole:
+    depends_on:
+      - cloudflared
+    restart: unless-stopped
+    container_name: pihole
+    image: pihole/pihole
+    hostname: zorg
+    environment:
+      - "TZ=America/New_York"
+      - "WEBPASSWORD=CHANGE-ME"
+      - "FTLCONF_LOCAL_IPV4=192.168.0.100"
+      - "DNS1=127.0.0.1#5053"
+      - "DNS2=no"
+      - "DNSMASQ_LISTENING=all"
+      - "DNSSEC=true"
+      - "TEMPERATUREUNIT=f"
+      - "WEBUIBOXEDLAYOUT=boxed"
+      - "QUERY_LOGGING=true"
+      - "WEBTHEME=default-darker"
+    volumes:
+      - "/srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/pihole/config:/etc/pihole/"
+      - "/srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/pihole/dnsmasq:/etc/dnsmasq.d/"
+    network_mode: host
+    cap_add:
+      - NET_ADMIN

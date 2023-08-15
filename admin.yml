@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  nginx-proxy-manager:
+    restart: unless-stopped
+    container_name: nginx-proxy-manager
+    image: "jc21/nginx-proxy-manager:latest"
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - /home/ad/docker/proxy/data:/data
+      - /home/ad/docker/proxy/letsencrypt:/etc/letsencrypt

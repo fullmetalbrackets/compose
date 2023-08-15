@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  node-exporter:
+    restart: unless-stopped
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    ports:
+      - 9100:9100
+
+  prometheus:
+    restart: unless-stopped
+    image: prom/prometheus:latest
+    container_name: prometheus
+    user: "0:0"
+    volumes:
+      - /home/ad/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/ad/docker/prometheus:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    ports:
+      - 9090:9090
+
+  grafana:
+    restart: unless-stopped
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3001:3000
+
+  cadvisor:
+    restart: unless-stopped
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080

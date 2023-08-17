@@ -43,7 +43,7 @@ Within the _Portainer_ UI choose your environment, then on the sidebar go to **S
 
 ### Stacks
 
-- _media_, _pihole_ & _speedtest_ currently running in host **apollo**
+- _media_, _photos_, _pihole_ & _speedtest tracker_ currently running in host **apollo**
 - _pihole_ & _fileshare_ currently running in host **korben**
 - _proxy_ currently running in **dobby**
 - _monitor_ not currently in use

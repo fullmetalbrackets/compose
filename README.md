@@ -10,7 +10,7 @@ cd compose
 docker compose -f <filename>.yml up
 ```
 
-For the **photos** stack:
+For the **photos** stack specifically:
 
 ```
 cd photos
@@ -25,15 +25,20 @@ docker compose up
 4. For _compose path_ enter the YAML file of your desired stack (e.g. `pihole.yml`)
 5. Name the stack, scroll down and click on **Deploy the stack**.
 
-Alternately, choose _build method_ **Web editor** and just copy & paste the contents of a YAML file in, then name the stack, scroll down and click on **Deploy the stack**.
+For the **photos** stack specifically:
 
-**NOTE:** For the **photos** stack, use the `docker-compose.yml` in the `photos` directory together with the environment variables in `librephotos.env`. In Portainer when creating a stack, either use _load variables from .env file_ or use _advanced mode_ and copy & paste the contents of the `.env` file.
+3. For _repository URL_ enter `https://github.com/fullmetalbrackets/compose/photos`
+4. For _compose path_ enter `compose.yml`
+5. Scroll down, click _load variables from .env file_ and choose the `.env` OR click on _advanced mode_ and copy & paste the contents of `.env`
+6. Name the stack, scroll down and click on **Deploy the stack**.
+
+Alternately, choose _build method_ **Web editor** and just copy & paste the contents of a YAML file in, name the stack, scroll down and click on **Deploy the stack**.
 
 ## Containers in each stack
 
 - _media_, _photos_, _pihole_, _proxy_ & _speedtest tracker_ currently running on **Apollo**
-- _pihole_ & _fileshare_ currently running on **Korben**
-- _monitor_ not currently in use
+- _pihole_ & _site_ currently running on **Korben**
+- _monitor_ & _fileshare_ not currently in use
 
 ## Hosts
 

@@ -20,11 +20,13 @@ docker compose -f <filename>.yml
 
 Alternately, choose _build method_ **Web editor** and just copy & paste the contents of a YAML file in, then name the stack, scroll down and click on **Deploy the stack**.
 
+**NOTE:** For the **photos** stack, use the `docker-compose.yml` in the `photos` directory together with the environment variables in `librephotos.env`. In Portainer when creating a stack, either use _load variables from .env file_ or use _advanced mode_ and copy & paste the contents of the `.env` file.
+
 ## Containers in each stack
 
-- _media_, _photos_, _pihole_ & _speedtest tracker_ currently running on **Apollo**
+- _media_, _photos_, _pihole_, _proxy_ & _speedtest tracker_ currently running on **Apollo**
 - _pihole_ & _fileshare_ currently running on **Korben**
-- _monitor_ and _proxy_ not currently in use
+- _monitor_ not currently in use
 
 ## Hosts
 
@@ -45,15 +47,15 @@ Alternately, choose _build method_ **Web editor** and just copy & paste the cont
   - Portainer Agent
   - Pi-Hole
   - Cloudflared
-  - Libre Photos
+  - LibrePhotos
   - Kavita
   - Navidrome
   - Jellyfin
   - Plex
   - Tautulli
-  - Scrutiny
   - qBittorrent
   - Speedtest Tracker
+  - Nginx Proxy Manager
 
 ### Korben
 

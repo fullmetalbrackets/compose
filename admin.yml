@@ -10,5 +10,5 @@ services:
       - "81:81"
       - "443:443"
     volumes:
-      - /home/ad/docker/proxy/data:/data
-      - /home/ad/docker/proxy/letsencrypt:/etc/letsencrypt
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/docker/proxy/data:/data
+      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/docker/proxy/letsencrypt:/etc/letsencrypt

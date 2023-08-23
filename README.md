@@ -7,7 +7,14 @@ A set of YAML files to create stacks of Docker containers with Docker Compose or
 ```
 git clone https://github.com/fullmetalbrackets/compose.git
 cd compose
-docker compose -f <filename>.yml
+docker compose -f <filename>.yml up
+```
+
+For the **photos** stack:
+
+```
+cd photos
+docker compose up
 ```
 
 ## Create stacks in Portainer

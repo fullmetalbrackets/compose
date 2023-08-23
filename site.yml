@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  site:
+    restart: unless-stopped
+    container_name: bleh-site
+    image: fullmetalbrackets/bleh:latest
+    ports:
+      - 8888:8888
+
+  tunnel:
+    restart: unless-stopped
+    container_name: bleh-tunnel
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=

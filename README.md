@@ -10,69 +10,64 @@ cd compose
 docker compose -f <filename>.yml
 ```
 
-## Install Portainer
-
-```
-docker volume create portainer_data \
-  docker run -d -p 8000:8000 -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
-```
-
-The above installs _Portainer Community Edition_. If using _Portainer Business Edition_, use image `portainer-ee` instead.
-
-## Install Portainer Agent
-
-If you want to control containers on multiple hosts, use one instance of _Portainer_ as the main one, and install _Portainer Agent_ on the other docker hosts.
-
-In the _Portainer_ UI sidebar, go to **Environments** -> **Add environment** -> **Docker Standalone** and click on **Start Wizard**. Select **Agent**, name it and specify the IP Address at the button, then copy & paste the command into the other host:
-
-```bash
-docker run -d \
-  -p 9001:9001 \
-  --name portainer-agent \
-  --restart=always \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /var/lib/docker/volumes:/var/lib/docker/volumes \
-  portainer/agent:latest
-```
-
-Once the container is up and running on the other host, click **Connect** at the bottom to finish.
-
 ## Create stacks in Portainer
 
-Within the _Portainer_ UI choose your environment, then on the sidebar go to **Stacks** -> **Add stack**. Copy & paste the contents of a YAML file into the web editor, then scroll down and click on **Deploy the stack**.
+1. In the _Portainer_ UI choose your environment, then on the sidebar go to **Stacks** -> **Add stack**.
+2. For _build method_ choose **Repository**
+3. For _repository URL_ enter `https://github.com/fullmetalbrackets/compose`
+4. For _compose path_ enter the YAML file of your desired stack (e.g. `pihole.yml`)
+5. Name the stack, scroll down and click on **Deploy the stack**.
 
-### Stacks
+Alternately, choose _build method_ **Web editor** and just copy & paste the contents of a YAML file in, then name the stack, scroll down and click on **Deploy the stack**.
 
-- _media_, _photos_, _pihole_ & _speedtest tracker_ currently running in host **apollo**
-- _pihole_ & _site_ currently running in host **korben**
-- _proxy_ currently running in **dobby**
-- _monitor_ & _fileshare_ not currently in use
+## Containers in each stack
 
-### Hosts
+- _media_, _photos_, _pihole_ & _speedtest tracker_ currently running on **Apollo**
+- _pihole_ & _fileshare_ currently running on **Korben**
+- _monitor_ and _proxy_ not currently in use
 
-**apollo**
+## Hosts
 
-- Dell Optiplex 3050 SFF
-- Intel i5-6500 Quad-Core @ 3.60 GHz
-- 16 GB RAM
-- 250 GB NVMe SSD, 2 TB 3.5" HDD, 2 TB 2.5" HDD
-- OS: OpenMediaVault 6
-- IP: 192.168.0.100
+### Apollo
 
-**korben**
+**Dell Optiplex 3050 SFF**
 
-- Dell Optiplex 3020 Micro
-- Intel Pentium G3250T Dual-Core @ 2.8 GHz
-- 8 GB RAM
-- 500 GB 2.5" HDD
-- OS: Debian 12
-- IP: 192.168.0.225
+- **OS:** OpenMediaVault 6
+- **IP:** 192.168.0.100
+- **CPU:** Intel i5-6500 Quad-Core @ 3.60 GHz
+- **Memory:** 16 GB RAM
+- **Storage:**
+  - 250 GB NVMe Internal SSD
+  - 2 TB 3.5" Internal HDD
+  - 1 TB 2.5" Internal HDD
+  - 1 TB 2.5" External HDD
+- **Containers:**
+  - Portainer Agent
+  - Pi-Hole
+  - Cloudflared
+  - Libre Photos
+  - Kavita
+  - Navidrome
+  - Jellyfin
+  - Plex
+  - Tautulli
+  - Scrutiny
+  - qBittorrent
+  - Speedtest Tracker
 
-**dobby**
+### Korben
 
-- ASUS T100 Transformer Book
-- Intel Atom Z3775 Quad-Core @ 2.3 GHz
-- 2 GB RAM
-- 64 GB SDD
-- OS: Debian 12
-- IP: 192.168.0.50
+**Dell Optiplex 3020 Micro**
+
+- **OS:** Debian 12
+- **IP:** 192.168.0.225
+- **CPU:** Intel Pentium G3250T Dual-Core @ 2.8 GHz
+- **Memory:** 8 GB RAM
+- **Storage:**
+  - 120 GB 2.5" Internal HDD
+  - 500 GB 2.5" External HDD
+- **Containers:**
+  - Portainer
+  - Pi-Hole
+  - Cloudflared
+  - WikiJS

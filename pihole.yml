@@ -33,6 +33,10 @@ services:
     volumes:
       - "/srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/pihole/config:/etc/pihole/"
       - "/srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/pihole/dnsmasq:/etc/dnsmasq.d/"
-    network_mode: host
+      - "/srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/pihole/dnsmasq:/etc/dnsmasq.d/"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "75:80/tcp" # web UI port
     cap_add:
       - NET_ADMIN

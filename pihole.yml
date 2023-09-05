@@ -7,7 +7,7 @@ services:
     image: cloudflare/cloudflared:latest
     command: proxy-dns
     environment:
-      - "TUNNEL_DNS_UPSTREAM=https://dns11.quad9.net/dns-query"
+      - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
       - "TUNNEL_DNS_PORT=5053"
       - "TUNNEL_DNS_ADDRESS=0.0.0.0"
 
@@ -37,6 +37,6 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "75:80/tcp" # web UI port
+      - "80:80/tcp" # web UI port
     cap_add:
       - NET_ADMIN

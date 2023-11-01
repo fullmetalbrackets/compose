@@ -68,35 +68,7 @@ services:
       - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/navidrome:/data
       - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/music
     environment:
-      ND_BASEURL: "/music"
+      # ND_BASEURL: "/music"
       ND_SCANSCHEDULE: 1h
       ND_LOGLEVEL: info
     network_mode: host
-
-  postgres:
-    restart: unless-stopped
-    image: postgres:15-alpine
-    volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/ryot/postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-
-  ryot:
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    container_name: ryot
-    image: "ghcr.io/ignisda/ryot:latest"
-    environment:
-      - SERVER_INSECURE_COOKIE=true
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
-    ports:
-      - "8000:8000"
-    volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/ryot:/data
-    pull_policy: always
-
-volumes:
-  postgres_storage:

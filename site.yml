@@ -1,12 +1,14 @@
-version: "3.7"
+version: "3.8"
 
 services:
   site:
     restart: unless-stopped
     container_name: bleh-site
-    image: fullmetalbrackets/bleh:latest
+    image: nginx:1.23.3-alpine
+    volumes:
+      - /home/ad/bleh/dist/:/usr/share/nginx/html/
     ports:
-      - 8888:8888
+      - 8888:80
 
   tunnel:
     restart: unless-stopped

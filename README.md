@@ -34,11 +34,22 @@ For the **photos** stack specifically:
 
 Alternately, choose _build method_ **Web editor** and just copy & paste the contents of a YAML file in, name the stack, scroll down and click on **Deploy the stack**.
 
+## Deploy bleh.cc site stack
+
+`site.yml` deploys Nginx and Cloudflare Tunnel.
+
+1. Use `git clone` to download the site code from Github
+2. From within site source directory, use `yarn` to install dependencies
+3. `yarn build` to build the static site, will output to `/dist` sub-directory
+4. In the `site.yml` under `volumes`, ensure the site's **dist** is the local volume -- ex. `/home/ad/bleh/dist/:/usr/share/nginx/html/`
+5. For the cloudflare tunnel, login to _Cloudflare Zero Trust_, go to _Access_ -> _Tunnel_, choose an existing tunnel and click _Configure_ (or create a new tunnel) and take note of the _token_, copy and paste it appended to the environmental variable `TUNNEL_TOKEN=` in `site.yml`
+6. With the `site.yml` updated with correct parameters, deploy the stack via any method stated above.
+
 ## Containers in each stack
 
-- _media_, _photos_, _pihole_, _proxy_ & _speedtest tracker_ currently running on **Apollo**
-- _pihole_ & _site_ currently running on **Korben**
-- _monitor_ & _fileshare_ not currently in use
+- _admin_, _arr_, _media_, _pihole_ & _speedtest tracker_ running on **Apollo**
+- _site_ running on **Potato**
+- _photos_, _monitor_ & _fileshare_ not currently in use
 
 ## Hosts
 
@@ -69,19 +80,18 @@ Alternately, choose _build method_ **Web editor** and just copy & paste the cont
   - Speedtest Tracker
   - Nginx Proxy Manager
 
-### Korben
+### Potato
 
-**Dell Optiplex 3020 Micro**
+**Libre Sweet Potato SBC**
 
-- **OS:** Debian 12
-- **IP:** 192.168.0.225
-- **CPU:** Intel Pentium G3250T Dual-Core @ 2.8 GHz
-- **Memory:** 8 GB RAM
+- **OS:** Debian 12 Bookworm
+- **IP:** 192.168.0.200
+- **Memory:** 2 GB RAM
 - **Storage:**
-  - 120 GB 2.5" Internal HDD
-  - 500 GB 2.5" External HDD
+  - 32 GB USB Boot Drive
+  - 32 GB USB Storage Drive
 - **Containers:**
-  - Portainer
+  - Portainer Agent
   - Pi-Hole
   - Cloudflared
-  - WikiJS
+  - Nginx + Cloudflare Tunnel

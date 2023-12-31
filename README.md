@@ -47,6 +47,6 @@ Alternately, choose _build method_ **Web editor** and just copy & paste the cont
 
 ## Containers in each stack
 
-- _admin_, _arr_, _media_, & _speedtest tracker_ on **Korben**
+- _admin_, _arr_, _media_, _paperless_ & _speedtest tracker_ on **Korben**
 - _site_ running on **Potato**
 - _pihole_, _photos_, _monitor_ & _fileshare_ not currently in use

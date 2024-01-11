@@ -1,24 +1,4 @@
-version: "3.9"
 services:
-  jellyfin:
-    restart: unless-stopped
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-      - JELLYFIN_PublishedServerUrl=192.168.0.100
-    volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/jellyfin:/config
-      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/tvshows:/data/tvshows
-      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/movies:/data/movies
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/data/music
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/dri/card0:/dev/dri/card0
-    network_mode: host
-
   plex:
     restart: unless-stopped
     container_name: plex
@@ -29,10 +9,10 @@ services:
       - PLEX_UID=1000
       - PLEX_GID=1000
     volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/plex:/config
-      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/movies:/movies
-      - /srv/dev-disk-by-uuid-218236ca-8e14-47ae-866a-a91e70c88a2a/tvshows:/tvshows
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/music
+      - /home/ad/docker/plex:/config
+      - /home/ad/media/movies:/movies
+      - /home/ad/media/tvshows:/tvshows
+      - /home/ad/media/music:/music
 
   tautulli:
     restart: unless-stopped
@@ -43,7 +23,7 @@ services:
       - PGID=1000
       - TZ=America/New_York
     volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/tautulli:/config
+      - /home/ad/docker/tautulli:/config
     ports:
       - 8181:8181
 
@@ -52,23 +32,29 @@ services:
     image: kizaing/kavita:latest
     container_name: kavita
     volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/ebooks/comics:/comics
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/ebooks/books:/books
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/kavita:/kavita/config
+      - /home/ad/other/ebooks/comics:/comics
+      - /home/ad/other/ebooks/books:/books
+      - /home/ad/docker/kavita:/kavita/config
     environment:
       - TZ=America/New_York
     ports:
       - "5000:5000"
 
-  navidrome:
-    restart: unless-stopped
-    container_name: navidrome
-    image: deluan/navidrome:latest
-    volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/navidrome:/data
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/music:/music
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
     environment:
-      # ND_BASEURL: "/music"
-      ND_SCANSCHEDULE: 1h
-      ND_LOGLEVEL: info
-    network_mode: host
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - WEBUI_PORT=8080
+    volumes:
+      - /home/ad/docker/qbittorrent:/config
+      - /home/ad/media/downloads:/downloads
+      - /home/ad/media/movies:/movies
+      - /home/ad/media/tvshows:/tvshows
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped

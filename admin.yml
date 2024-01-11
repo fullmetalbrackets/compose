@@ -1,51 +1,49 @@
-version: "3.3"
-
 services:
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
     volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/uptime:/app/data
+      - /home/ad/docker/uptime:/app/data
     ports:
       - 3001:3001
     restart: unless-stopped
 
-  homarr:
-    image: ghcr.io/ajnart/homarr:latest
-    container_name: homarr
-    volumes:
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/homarr/configs:/app/data/configs
-      - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/homarr/icons:/app/public/icons
-    environment:
-      - EDIT_MODE_PASSWORD=CHANGE-ME
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: "jc21/nginx-proxy-manager:latest"
     ports:
-      - 7575:7575
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - /home/ad/docker/nginxproxymgr/data:/data
+      - /home/ad/docker/nginxproxymgr/letsencrypt:/etc/letsencrypt
     restart: unless-stopped
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  # homarr:
+  #   image: ghcr.io/ajnart/homarr:latest
+  #   container_name: homarr
+  #   volumes:
+  #     - /home/ad/docker/homarr/configs:/app/data/configs
+  #     - /home/ad/docker/homarr/icons:/app/public/icons
+  #   environment:
+  #     - EDIT_MODE_PASSWORD=CHANGE-ME
+  #   ports:
+  #     - 7575:7575
+  #   restart: unless-stopped
 
   # homepage:
   #   image: ghcr.io/gethomepage/homepage:latest
   #   container_name: homepage
   #   volumes:
-  #     - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/homepage:/app/config
+  #     - /home/ad/docker/homepage:/app/config
   #     - /var/run/docker.sock:/var/run/docker.sock
   #   ports:
   #     - 3000:3000
   #   restart: unless-stopped
-
-  # nginx-proxy-manager:
-  #   container_name: nginx-proxy-manager
-  #   image: 'jc21/nginx-proxy-manager:latest'
-  #   ports:
-  #     - '80:80'
-  #     - '81:81'
-  #     - '443:443'
-  #   volumes:
-  #     - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/nginxproxymgr/data:/data
-  #     - /srv/dev-disk-by-uuid-484794a4-ec51-4120-a430-f753ae0a4fd0/docker/nginxproxymgr/letsencrypt:/etc/letsencrypt
-  #   restart: unless-stopped
-
-  # watchtower:
-  #   container_name: watchtower
-  #   image: containrrr/watchtower
-  #   volumes:
-  #     - '/var/run/docker.sock:/var/run/docker.sock'

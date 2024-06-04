@@ -1,4 +1,23 @@
 services:
+  scrutiny:
+    container_name: scrutiny
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    restart: unless-stopped
+    cap_add:
+      - SYS_RAWIO
+    ports:
+      - "8880:8080" # webapp
+      - "8086:8086" # influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /home/ad/docker/scrutiny:/opt/scrutiny/config
+      - /home/ad/docker/scrutiny/influxdb:/opt/scrutiny/influxdb
+    devices:
+      - "/dev/sda"
+      - "/dev/sdb"
+      - "/dev/sdc"
+      - "/dev/sdd"
+
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
@@ -6,44 +25,62 @@ services:
       - /home/ad/docker/uptime:/app/data
     ports:
       - 3001:3001
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     restart: unless-stopped
 
-  nginx-proxy-manager:
-    container_name: nginx-proxy-manager
-    image: "jc21/nginx-proxy-manager:latest"
-    ports:
-      - "80:80"
-      - "81:81"
-      - "443:443"
+  # flame:
+  #   image: pawelmalak/flame:multiarch
+  #   container_name: flame
+  #   volumes:
+  #     - /home/ad/docker/flame:/app/data
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   ports:
+  #     - 5005:5005
+  #   environment:
+  #     - PASSWORD=kkmargo
+  #   restart: unless-stopped
+
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - DB_CONNECTION=sqlite
+      # - APP_KEY= #optional
+      # - DB_HOST= #optional
+      # - DB_PORT= #optional
+      # - DB_DATABASE= #optional
+      # - DB_USERNAME= #optional
+      # - DB_PASSWORD= #optional
     volumes:
-      - /home/ad/docker/nginxproxymgr/data:/data
-      - /home/ad/docker/nginxproxymgr/letsencrypt:/etc/letsencrypt
+      - /home/ad/docker/speedtest:/config
+    ports:
+      - 8800:80
     restart: unless-stopped
+
+  nginx-proxy:
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - /home/ad/docker/nginxproxy:/data
+      - /home/ad/docker/nginxproxy/letsencrypt:/etc/letsencrypt
 
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-
-  # homarr:
-  #   image: ghcr.io/ajnart/homarr:latest
-  #   container_name: homarr
-  #   volumes:
-  #     - /home/ad/docker/homarr/configs:/app/data/configs
-  #     - /home/ad/docker/homarr/icons:/app/public/icons
-  #   environment:
-  #     - EDIT_MODE_PASSWORD=CHANGE-ME
-  #   ports:
-  #     - 7575:7575
-  #   restart: unless-stopped
-
-  # homepage:
-  #   image: ghcr.io/gethomepage/homepage:latest
-  #   container_name: homepage
-  #   volumes:
-  #     - /home/ad/docker/homepage:/app/config
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   ports:
-  #     - 3000:3000
-  #   restart: unless-stopped
+    restart: unless-stopped
+    environment:
+      - WATCHTOWER_NOTIFICATION_URL=pushover://:<application api token>@<user key>
+      - WATCHTOWER_NOTIFICATIONS_HOSTNAME=Korben
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=false

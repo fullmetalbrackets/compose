@@ -1,45 +1,41 @@
-version: "3.4"
 services:
   broker:
+    container_name: paperless-broker
     image: docker.io/library/redis:7
     restart: unless-stopped
     volumes:
-      - /home/ad/docker/paperless/redisdata:/data
+      - /home/ad/docker/paperless/redis:/data
+
   db:
+    container_name: paperless-db
     image: docker.io/library/postgres:15
     restart: unless-stopped
     volumes:
-      - /home/ad/docker/paperless/pgdata:/var/lib/postgresql/data
+      - /home/ad/docker/paperless/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: paperless
+
   webserver:
+    container_name: paperless-web
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     restart: unless-stopped
     depends_on:
       - db
       - broker
     ports:
-      - 8000:8000
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -fs
-        - -S
-        - --max-time
-        - "2"
-        - http://localhost:8000
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - "8008:8000"
     volumes:
       - /home/ad/docker/paperless/data:/usr/src/paperless/data
       - /home/ad/docker/paperless/media:/usr/src/paperless/media
-      - /home/ad/other/paperless:/usr/src/paperless/export
-      - /home/ad/other/documents:/usr/src/paperless/consume
-    env_file: .env
+      - /home/ad/documents/export:/usr/src/paperless/export
+      - /home/ad/documents/paperless:/usr/src/paperless/consume
     environment:
+      USERMAP_UID: 1000
+      USERMAP_GID: 1000
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
+      PAPERLESS_TIME_ZONE: America/New_York
+      PAPERLESS_ADMIN_USER: 
+      PAPERLESS_ADMIN_PASSWORD: 

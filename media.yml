@@ -12,33 +12,71 @@ services:
       - /home/ad/docker/plex:/config
       - /home/ad/media/movies:/movies
       - /home/ad/media/tvshows:/tvshows
-      - /home/ad/media/music:/music
+      - /home/ad/other/music:/music
+    devices:
+      - /dev/dri:/dev/dri
+
+  tunnel:
+    restart: unless-stopped
+    container_name: plex-tunnel
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=
+    depends_on:
+      - plex
 
   tautulli:
     restart: unless-stopped
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
+    ports:
+      - 8181:8181
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/New_York
     volumes:
       - /home/ad/docker/tautulli:/config
-    ports:
-      - 8181:8181
+    depends_on:
+      - plex
 
   kavita:
     restart: unless-stopped
-    image: kizaing/kavita:latest
+    image: jvmilazz0/kavita:latest
     container_name: kavita
+    ports:
+      - 5000:5000
     volumes:
       - /home/ad/other/ebooks/comics:/comics
       - /home/ad/other/ebooks/books:/books
       - /home/ad/docker/kavita:/kavita/config
     environment:
       - TZ=America/New_York
+
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    network_mode: bridge
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
     ports:
-      - "5000:5000"
+      - 8080:8080/tcp # qbittorrent
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - /home/ad/docker/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=ivpn
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=
+      - OPENVPN_PASSWORD=
+      - TZ=America/New_York
+      - UPDATER_PERIOD=72h
+      - SERVER_COUNTRIES="United States"
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -50,11 +88,15 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - /home/ad/docker/qbittorrent:/config
-      - /home/ad/media/downloads:/downloads
-      - /home/ad/media/movies:/movies
-      - /home/ad/media/tvshows:/tvshows
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
+      - /mnt/media2/downloads:/downloads
+      - /mnt/media2/movies:/movies
+      - /mnt/media2/tvshows:/tvshows
+      # - /home/ad/other/music:/music
+    # ports:
+    #   - 8080:8080
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    network_mode: "service:gluetun"
     restart: unless-stopped
+    depends_on:
+      - gluetun

@@ -1,0 +1,43 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - /home/ad/docker/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - 1883:1883
+      - 9002:9001
+    volumes:
+      - /home/ad/docker/mosquitto/config:/mosquitto/config
+      - /home/ad/docker/mosquitto/data:/mosquitto/data
+      - /home/ad/docker/mosquitto/log:/mosquitto/log
+
+  # ps5-mqtt:
+  #   container_name: PS5-MQTT
+  #   image: ghcr.io/funkeyflo/ps5-mqtt/aarch64:latest
+  #   entrypoint: /config/run.sh
+  #   volumes:
+  #     - /home/ad/docker/ps5-mqtt:/config
+  #   network_mode: host
+  #   environment:
+  #     - MQTT_HOST=192.168.0.225
+  #     - MQTT_PORT=1883
+  #     - DEVICE_CHECK_INTERVAL=5000
+  #     - DEVICE_DISCOVERY_INTERVAL=60000
+  #     - ACCOUNT_CHECK_INTERVAL=5000
+  #     - 'PSN_ACCOUNTS=[{"username": "", "npsso":""}]'
+  #     - INCLUDE_PS4_DEVICES=false
+  #     - FRONTEND_PORT=8645
+  #     - CREDENTIAL_STORAGE_PATH=/config/credentials.json
+  #     - DEBUG=@ha:ps5:*

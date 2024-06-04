@@ -7,6 +7,7 @@ services:
     image: filebrowser/filebrowser:latest
     volumes:
       - /home/ad/fileshare:/srv
+      # create local directories & empty files before running
       - /home/ad/docker/filebrowser/filebrowser.db:/database/filebrowser.db
       - /home/ad/docker/filebrowser/settings.json:/config/settings.json
     ports:

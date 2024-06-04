@@ -1,18 +1,16 @@
-version: "3.8"
-
 services:
-  site:
+  techservatory:
     restart: unless-stopped
-    container_name: bleh-site
-    image: nginx:1.23.3-alpine
+    container_name: techservatory
+    image: nginx:mainline-alpine-slim
     volumes:
-      - /home/ad/bleh/dist/:/usr/share/nginx/html/
+      - /home/ad/techservatory/dist/:/usr/share/nginx/html/
     ports:
-      - 8888:80
+      - 8880:80
 
   tunnel:
     restart: unless-stopped
-    container_name: bleh-tunnel
+    container_name: tunnel
     image: cloudflare/cloudflared:latest
     command: tunnel run
     environment:

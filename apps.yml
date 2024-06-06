@@ -1,45 +1,4 @@
-networks:
-  forgejo:
-    external: false
-
 services:
-  forgejo-srv:
-    image: codeberg.org/forgejo/forgejo:1.21
-    container_name: forgejo
-    environment:
-      - USER_UID=1000
-      - USER_GID=1000
-      - FORGEJO__database__DB_TYPE=postgres
-      - FORGEJO__database__HOST=db:5432
-      - FORGEJO__database__NAME=forgejo
-      - FORGEJO__database__USER=forgejo
-      - FORGEJO__database__PASSWD=kkmargo82
-    restart: unless-stopped
-    networks:
-      - forgejo
-    volumes:
-      - /home/ad/docker/forgejo:/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - '3000:3000'
-      - '222:22'
-    depends_on:
-      - db
-
-  forgejo-db:
-    image: postgres:14
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=forgejo
-      - POSTGRES_PASSWORD=kkmargo82
-      - POSTGRES_DB=forgejo
-    networks:
-      - forgejo
-    volumes:
-      - /home/ad/docker/postgres:/var/lib/postgresql/data
-
   opengist:
     image: ghcr.io/thomiceli/opengist:1
     container_name: opengist
@@ -62,6 +21,7 @@ services:
       - PGID=1000
     volumes:
       - /home/ad/docker/syncthing:/var/syncthing
+      - /home/ad/other:/other
     network_mode: host
     restart: unless-stopped
 
